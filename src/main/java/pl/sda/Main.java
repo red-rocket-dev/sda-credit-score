@@ -57,6 +57,7 @@ public class Main {
         // * raty kredytów które spłaca (wprowadza po przecinku) (loanInstallments)
         // * odpowiada czy było opóźnienie (repaymentDelayed)
         // * wprowadza ile chce pożyczyć (amountOfCredit)
+        // * wprowadza na jak dlugo chce pozyczyc
         // Wprowadzone dane zapisz do klasy Debtor (raty kredytów wprowadzone po przecinku musisz rozbić na pojedyncze elementy, zapisz je tablicy)
         // 2. Stwórz klasę RulesEngine, która będzie przetwarzała podane argumenty, powinna:
         // a mieć pola, które są wypełniane w konstruktorze:
