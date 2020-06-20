@@ -1,6 +1,7 @@
 package pl.sda;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 
 public class RulesEngine {
     private BigDecimal interest;
@@ -19,7 +20,17 @@ public class RulesEngine {
         BigDecimal sumOfAllLoansInstallments = debitor.getSumOfLoanInstallments().add(debitor.loanInstallment());
         final BigDecimal loweringIncomeFactor = new BigDecimal("0.8");
         BigDecimal acceptableLevelOfDebitorIncome = debitor.getIncome().multiply(loweringIncomeFactor);
-        int resultOfCompareTo = sumOfAllLoansInstallments.compareTo(acceptableLevelOfDebitorIncome);
+
+        BigDecimal repaymentPeriodBigDecimal = BigDecimal.valueOf(debitor.getRepaymentPeriod());
+
+        BigDecimal creditCost = debitor.getAmountOfCredit().multiply(interest).add(commission);
+
+        BigDecimal installmentOfNewLoan = debitor.getAmountOfCredit()
+                .add(creditCost)
+                .divide(repaymentPeriodBigDecimal, MathContext.DECIMAL32);
+
+        BigDecimal futureSumOfAllLoanInstallments = sumOfAllLoansInstallments.add(installmentOfNewLoan);
+        int resultOfCompareTo = futureSumOfAllLoanInstallments.compareTo(acceptableLevelOfDebitorIncome);
         return resultOfCompareTo >= 0;
     }
 
