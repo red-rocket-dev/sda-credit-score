@@ -2,35 +2,48 @@
 package pl.sda;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
-import java.math.RoundingMode;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        //playground
-        //TODO: sprawdzic skad sie bierze maks. wartosc BigDecimal
 
-        // wynik to:
-        // 1011.0110011001100110011
-        // ale nie miesci sie juz w pamieci przeznaczonej na double
-        //TODO: znalezc przyklad
-        BigInteger a = new BigInteger("2000000");
-        BigInteger b = BigInteger.valueOf(1);
-        BigInteger sum = a.add(b);
-        System.out.println(sum);
+        Debitor debitor1 = new Debitor();
+        RulesEngine rulesOfLoan1 = new RulesEngine(new BigDecimal("0.06"), new BigDecimal("3000"));
 
-        System.out.println("BigDecimal");
-        BigDecimal a1 = BigDecimal.valueOf(9);
-        BigDecimal b1 = BigDecimal.valueOf(8.1);
-        System.out.println(a1.add(b1).setScale(4, RoundingMode.UP));
-        System.out.println(a1.multiply(b1));
-        System.out.println(a1.divide(b1, MathContext.DECIMAL128));
-        // zaokrlaglenie przydaje sie kiedy z dzielenia wychodzi liczba z okresem
-        // np. 1.(1)
-        System.out.println(a1.pow(2));
-        System.out.println(a1.sqrt(MathContext.DECIMAL64));
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Podaj swój wiek: ");
+        debitor1.setAge(scanner.nextInt());
+        System.out.print("Podaj swój dochód: ");
+        debitor1.setIncome(scanner.nextBigDecimal());
+        scanner.nextLine(); //potrzebne, jeśli wczytujemy napis po wczytaniu liczby
+        System.out.print("Podaj wysokość rat aktualnie spłacanych kredytów: ");
+        String loanInstallmentsInput = scanner.nextLine();
+        String[] loanInstallmentsString = loanInstallmentsInput.split(",");
+        BigDecimal[] loanInstallments = new BigDecimal[loanInstallmentsString.length];
+        BigDecimal sumOfLoanInstallments = new BigDecimal("0");
+        for (int i = 0; i < loanInstallmentsString.length; i++) {
+            BigDecimal loanInstallment = new BigDecimal(loanInstallmentsString[i]);
+            loanInstallments[i] = loanInstallment;
+            sumOfLoanInstallments = sumOfLoanInstallments.add(loanInstallment);
+        }
 
+        debitor1.setLoanInstallments(loanInstallments); //TODO: inaczej
+        debitor1.setSumOfLoanInstallments(sumOfLoanInstallments);
+
+        String isDelayedInput;
+        do {
+            System.out.print("Czy do tej pory wystąpiły jakieś opóźnienia w spłacie rat kredytów? [t=TAK/n=NIE]");
+            isDelayedInput = scanner.nextLine();
+        } while (!isDelayedInput.matches("[TtNn]"));
+
+        debitor1.setRepaymentDelayed(isDelayedInput.matches("[Tt]"));
+
+        System.out.print("Podaj wysokość kredytu o jaki wnioskujesz: ");
+        debitor1.setAmountOfCredit(scanner.nextBigDecimal());
+        System.out.print("Okres spłaty wnioskowanego kredytu (w latach): ");
+        debitor1.setRepaymentPeriod(scanner.nextInt());
+
+        System.out.println(rulesOfLoan1.isCreditApproved(debitor1));
 
         // Napisz aplikacje do analizy zdolnosci kredytowej, parametry które powinny zostać wzięte pod uwagę to:
         // * wiek
@@ -68,6 +81,6 @@ public class Main {
         // 3. W main utwórz zmienną zawierającą nowy obiekt typu RulesEngine podając w konstruktorze parametry (np. 0,06 i 3000), przetestuj czy rzeczywiscie podane reguły działają
         // 4. W argumencie wprowadź obiekt Debtor utworzony z wprowadzonych przez klienta danych
     }
-}
 
+}
 
